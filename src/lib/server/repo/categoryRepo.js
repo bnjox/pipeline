@@ -1,4 +1,5 @@
 //@ts-check
+import { normalizeProjectRecord } from '$lib/server/repo/projectRepo.js';
 
 export async function getAllCategories(supabase) {
   const { data, error } = await supabase.from('categories').select('*');
@@ -44,8 +45,7 @@ export async function getProjectsByCategoriesWithPagination(categoryIds, start, 
       funding_goal,
       current_funding,
       user_id,
-      published_at,
-      dpgStatus,
+      github_repo,
       category_project!inner (
         categories!inner (
           id,
@@ -58,7 +58,6 @@ export async function getProjectsByCategoriesWithPagination(categoryIds, start, 
     `,
     )
     .in('category_id', categoryIds)
-    .not('projects.published_at', 'is', null)
     .range(start, end);
 
   if (error) throw new Error(error.message);
@@ -69,7 +68,7 @@ export async function getProjectsByCategoriesWithPagination(categoryIds, start, 
 
   data?.forEach((item) => {
     if (item.projects && !seenProjectIds.has(item.projects.id)) {
-      uniqueProjects.push(item.projects);
+      uniqueProjects.push(normalizeProjectRecord(item.projects));
       seenProjectIds.add(item.projects.id);
     }
   });
