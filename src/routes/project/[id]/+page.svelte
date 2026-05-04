@@ -38,7 +38,7 @@
   let date;
 
   export let data;
-  const project = data.project;
+  const project = data.project ?? {};
   const totalResources = data.totalResources;
 
   const githubLinkSplit = project?.github?.split('/') || [];
@@ -112,7 +112,7 @@
     showGitDetail = showGitDetail;
   }
 
-  $: date = project.created_at ? format(new Date(project.created_at), 'd/M/yy') : '';
+  $: date = project?.created_at ? format(new Date(project.created_at), 'd/M/yy') : '';
 
   $: banner = project.banner_image
     ? project.banner_image
@@ -180,7 +180,7 @@
           <div class="space-y-2">
             <div class="flex items-center gap-3 text-body-sm text-gray-400">
               <Icon icon="lucide:calendar" class="h-4 w-4" />
-              <time datetime={project.created_at}>Created {date}</time>
+              <time datetime={project?.created_at}>Created {date}</time>
             </div>
             <div class="flex items-center gap-4">
               <h1 class="text-display-xl font-semibold leading-tight text-white">
