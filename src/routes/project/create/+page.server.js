@@ -1,6 +1,21 @@
+import { allCategories } from '$lib/server/service/categoryService.js';
 import { createProjectSchema } from '$lib/server/validator/projectSchema.js';
 import { uploadImageAndReturnUrl } from '$lib/server/service/imageUploadService.js';
 import { error, fail, json, redirect } from '@sveltejs/kit';
+
+export async function load({ locals }) {
+  try {
+    return {
+      categories: await allCategories(locals.supabase),
+    };
+  } catch (error) {
+    console.error('Failed to load categories for project creation:', error);
+
+    return {
+      categories: [],
+    };
+  }
+}
 
 /** @type {import('./$types').Actions} */
 export const actions = {
